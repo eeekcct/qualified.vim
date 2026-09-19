@@ -63,12 +63,22 @@ are not selected. Malformed candidates such as `Foo::`, `::`, `Foo::::Bar`,
 `::Foo::`, and `Foo::Bar::` are rejected in full.
 
 Only the current line is examined. A name split across lines is not joined.
-With the cursor outside a recognized name, an operator is cancelled without
-changing text or registers; in Visual mode, the existing selection is kept.
+When invoking `iq` with the cursor outside a recognized name, an operator is
+cancelled without changing text or registers; in Visual mode, the existing
+selection is kept. Dot repeat has the limitation described below.
 Counts do not extend the object to other names.
 
 The plugin does not change `'iskeyword'`, so `w`, `b`, `iw`, `*`, and `#`
 keep their normal behavior. See `:help qualified` for details.
+
+## Known issue
+
+Dot repeat on a position without a qualified name does not cancel the pending
+operator. For example, starting at `Foo::Bar` in `Foo::Bar plain`, typing
+`ciqX<Esc>w.` produces `X Xplain` instead of leaving `X plain` unchanged.
+The repeated command calls the selection function directly, bypassing the
+mapping's availability check. Repeating on another qualified name works.
+Tracked in [issue #2](https://github.com/eeekcct/qualified.vim/issues/2).
 
 ## Development
 

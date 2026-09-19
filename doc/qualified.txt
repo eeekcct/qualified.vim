@@ -8,6 +8,7 @@ CONTENTS                                                *qualified*
   1. Requirements ................ |qualified-requirements|
   2. Usage ....................... |qualified-usage|
   3. Matching rules .............. |qualified-matching|
+  4. Known issue ................. |qualified-known-issue|
 
 ==============================================================================
 1. Requirements                                         *qualified-requirements*
@@ -30,8 +31,9 @@ standard operators and registers, for example "ayiq. Changes support |.| repeat.
 There is no aq object and no separate change, delete, or yank command.
 Counts do not extend the object to other names.
 
-When no qualified name contains the cursor, the operator is cancelled without
-changing text or registers. In Visual mode, the existing selection is kept.
+When invoking iq with no qualified name under the cursor, the operator is
+cancelled without changing text or registers. In Visual mode, the existing
+selection is kept. For dot repeat, see |qualified-known-issue|.
 
 The plugin does not change 'iskeyword' or the behavior of w, b, iw, *, or #.
 
@@ -79,5 +81,18 @@ qualified name. For example, these lines are not combined into one object:
       HashMap
 <
 Both 'selection' values inclusive and exclusive are supported, as well as old.
+
+==============================================================================
+4. Known issue                                          *qualified-known-issue*
+
+Dot repeat at a position without a qualified name does not cancel the pending
+operator. For example, starting at Foo::Bar in this line:
+>
+    Foo::Bar plain
+<
+Typing ciqX<Esc>w. produces "X Xplain" instead of leaving "X plain" unchanged.
+The repeated command calls the selection function directly, bypassing the
+mapping's availability check. Repeating on another qualified name works.
+Tracked at https://github.com/eeekcct/qualified.vim/issues/2.
 
  vim:tw=78:ts=8:noet:ft=help:norl:

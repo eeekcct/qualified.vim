@@ -18,18 +18,14 @@ def FindName(): list<number>
   return [match[1] + 1, match[2]]
 enddef
 
-export def Select(visual: bool, prepared: list<number> = []): string
-  # Pass a range through the mapping rather than retaining shared state.
-  # Dot repeat must recompute it when the buffer or cursor has changed.
-  var context = [bufnr(), b:changedtick, line('.'), col('.')]
-  var columns = !empty(prepared) && prepared[2 : ] == context
-    ? prepared[0 : 1] : FindName()
+export def Available(): bool
+  return !empty(FindName())
+enddef
+
+export def Select(visual: bool)
+  var columns = FindName()
   if empty(columns)
-    return visual ? '' : "\<Esc>"
-  endif
-  if !visual && empty(prepared)
-    return printf("\<Cmd>call qualified#Select(v:false, %s)\<CR>",
-      string(columns + context))
+    return
   endif
   var line_number = line(".")
 
@@ -40,5 +36,4 @@ export def Select(visual: bool, prepared: list<number> = []): string
   call cursor(line_number, columns[0])
   normal! v
   call cursor(line_number, columns[1] + (&selection ==# 'exclusive' ? 1 : 0))
-  return ''
 enddef
