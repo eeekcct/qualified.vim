@@ -7,5 +7,5 @@ g:loaded_qualified = 1
 
 import autoload 'qualified.vim'
 
-xnoremap <silent> iq <ScriptCmd>qualified.Select(true)<CR>
-onoremap <silent> <expr> iq qualified#Available() ? "\<Cmd>call qualified#Select(v:false)\<CR>" : "\<Esc>"
+xnoremap <silent> iq <ScriptCmd>qualified.Select(true, false)<CR>
+onoremap <silent> <expr> iq qualified#Select(v:false, v:true)

@@ -18,14 +18,16 @@ def FindName(): list<number>
   return [match[1] + 1, match[2]]
 enddef
 
-export def Available(): bool
-  return !empty(FindName())
-enddef
-
-export def Select(visual: bool)
+export def Select(visual: bool, operation: bool): string
   var columns = FindName()
+
+  # The operator mapping needs keys to execute after expression evaluation.
+  if operation
+    return empty(columns) ? "\<Esc>" : "\<Cmd>call qualified#Select(v:false, v:false)\<CR>"
+  endif
+
   if empty(columns)
-    return
+    return ''
   endif
   var line_number = line(".")
 
@@ -36,4 +38,5 @@ export def Select(visual: bool)
   call cursor(line_number, columns[0])
   normal! v
   call cursor(line_number, columns[1] + (&selection ==# 'exclusive' ? 1 : 0))
+  return ''
 enddef
