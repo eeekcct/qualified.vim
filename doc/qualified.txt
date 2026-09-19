@@ -1,0 +1,83 @@
+*qualified.txt*  A text object for names separated by ::
+
+Author: eeekcct
+License: MIT
+
+CONTENTS                                                *qualified*
+
+  1. Requirements ................ |qualified-requirements|
+  2. Usage ....................... |qualified-usage|
+  3. Matching rules .............. |qualified-matching|
+
+==============================================================================
+1. Requirements                                         *qualified-requirements*
+
+Vim 9.0 or later with +vim9script. Neovim is not supported.
+No external commands or dependencies are required.
+
+==============================================================================
+2. Usage                                                *qualified-usage*
+
+Place the cursor anywhere in a qualified name, including on either colon:
+>
+    viq     Select the qualified name
+    ciq     Change the qualified name
+    diq     Delete the qualified name
+    yiq     Yank the qualified name
+<
+The plugin maps iq in Visual and Operator-pending modes. It works with Vim's
+standard operators and registers, for example "ayiq. Changes support |.| repeat.
+There is no aq object and no separate change, delete, or yank command.
+Counts do not extend the object to other names.
+
+When no qualified name contains the cursor, the operator is cancelled without
+changing text or registers. In Visual mode, the existing selection is kept.
+
+The plugin does not change 'iskeyword' or the behavior of w, b, iw, *, or #.
+
+==============================================================================
+3. Matching rules                                       *qualified-matching*
+
+A qualified name contains at least one ::. A leading :: is allowed, including
+a single identifier after it. Examples:
+>
+    Foo::Bar
+    Foo::Bar::Baz
+    ::Foo
+    ::Foo::Bar
+    ActiveRecord::Base
+    std::collections::HashMap
+    crate::parser::Token
+    self::foo::Bar
+    super::parser::Token
+    Self::Error
+<
+Each identifier starts with [A-Za-z_] and continues with [A-Za-z0-9_].
+The syntax is independent of file type. Unicode identifiers and Rust raw
+identifiers are outside the v1 grammar; matching does not parse the language.
+
+The whole contiguous candidate of ASCII letters, digits, underscores, and
+colons must be valid. A valid-looking substring of a malformed candidate is
+not selected. These examples are outside the grammar:
+>
+    Foo                 single identifier
+    HashMap             single identifier
+    foo:bar             single colon
+    path: &Path         single colon
+    Foo::               missing identifier
+    ::                  missing identifier
+    Foo::::Bar          repeated separator
+    ::Foo::             missing final identifier
+    Foo::Bar::          missing final identifier
+    Foo :: Bar          spaces around the separator
+<
+Only the current line is examined. Spaces and newlines cannot occur inside a
+qualified name. For example, these lines are not combined into one object:
+>
+    std::
+      collections::
+      HashMap
+<
+Both 'selection' values inclusive and exclusive are supported, as well as old.
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
