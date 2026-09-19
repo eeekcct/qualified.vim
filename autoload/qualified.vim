@@ -1,5 +1,8 @@
 vim9script
 
+# Named modes keep Vim 9.0 compatibility; native enums require Vim 9.1.0219.
+export const Mode = {Visual: 0, Operator: 1, Select: 2}
+
 def FindName(): list<number>
   var line_text = getline(".")
   var cursor_col = col(".") - 1
@@ -18,12 +21,12 @@ def FindName(): list<number>
   return [match[1] + 1, match[2]]
 enddef
 
-export def Select(visual: bool, operation: bool): string
+export def Select(mode: number = Mode.Select): string
   var columns = FindName()
 
   # The operator mapping needs keys to execute after expression evaluation.
-  if operation
-    return empty(columns) ? "\<Esc>" : "\<Cmd>call qualified#Select(v:false, v:false)\<CR>"
+  if mode == Mode.Operator
+    return empty(columns) ? "\<Esc>" : "\<Cmd>call qualified#Select()\<CR>"
   endif
 
   if empty(columns)
@@ -31,7 +34,7 @@ export def Select(visual: bool, operation: bool): string
   endif
   var line_number = line(".")
 
-  if visual
+  if mode == Mode.Visual
     execute "normal! \<Esc>"
   endif
 
