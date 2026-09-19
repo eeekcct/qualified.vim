@@ -129,6 +129,15 @@ function! s:Run() abort
   call s:Reset('Foo::Bar Baz::Qux', 1)
   call s:Keys("ciqX\<Esc>w.")
   call assert_equal('X X', getline(1), 'Repeat change')
+
+  " Repeated edits must resolve a fresh range, not reuse the previous columns.
+  for keys in ['diq', "ciqX\<Esc>"]
+    call s:Reset(['prefix ::Foo tail', '  std::collections::HashMap tail'], 9)
+    call s:Keys(keys . 'j0w.')
+    let expected = keys ==# 'diq' ? ['prefix  tail', '   tail'] : ['prefix X tail', '  X tail']
+    call assert_equal(expected, getline(1, '$'), 'Repeat with different position and length')
+  endfor
+
   call s:Reset('Foo::Bar', 1)
   call s:Keys('"ayiq')
   call assert_equal('Foo::Bar', getreg('a'), 'Named register')

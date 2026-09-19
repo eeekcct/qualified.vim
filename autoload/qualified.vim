@@ -1,5 +1,7 @@
 vim9script
 
+var pending_columns: list<number> = []
+
 def FindName(): list<number>
   var line_text = getline(".")
   var cursor_col = col(".") - 1
@@ -18,12 +20,19 @@ def FindName(): list<number>
   return [match[1] + 1, match[2]]
 enddef
 
-export def Available(): bool
-  return !empty(FindName())
+export def Operator(): string
+  pending_columns = FindName()
+  if empty(pending_columns)
+    return "\<Esc>"
+  endif
+  return "\<Cmd>call qualified#Select(v:false)\<CR>"
 enddef
 
 export def Select(visual: bool): void
-  var columns = FindName()
+  # Consume the expression mapping's result once. Dot repeat calls Select
+  # directly, so it must find the name at the new cursor position instead.
+  var columns = !visual && !empty(pending_columns) ? pending_columns : FindName()
+  pending_columns = []
   if empty(columns)
     return
   endif
