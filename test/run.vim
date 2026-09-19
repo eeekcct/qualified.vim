@@ -138,6 +138,17 @@ function! s:Run() abort
     call assert_equal(expected, getline(1, '$'), 'Repeat with different position and length')
   endfor
 
+  " With yank repeat enabled, only the cursor changes between invocations.
+  let saved_cpoptions = &cpoptions
+  try
+    set cpoptions+=y
+    call s:Reset('::Foo std::collections::HashMap', 1)
+    call s:Keys('yiqW.')
+    call assert_equal('std::collections::HashMap', getreg('"'), 'Repeat yank at a new position')
+  finally
+    let &cpoptions = saved_cpoptions
+  endtry
+
   call s:Reset('Foo::Bar', 1)
   call s:Keys('"ayiq')
   call assert_equal('Foo::Bar', getreg('a'), 'Named register')

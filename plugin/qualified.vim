@@ -8,4 +8,4 @@ g:loaded_qualified = 1
 import autoload 'qualified.vim'
 
 xnoremap <silent> iq <ScriptCmd>qualified.Select(true)<CR>
-onoremap <silent> <expr> iq qualified#Operator()
+onoremap <silent> <expr> iq qualified#Select(v:false)
