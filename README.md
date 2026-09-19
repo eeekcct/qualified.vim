@@ -6,7 +6,7 @@ and use `iq` with a standard operator.
 
 ## Requirements
 
-- Vim 9.0 or later with `+vim9script` (Neovim is not supported).
+- Vim 9.1.0219 or later with `+vim9script` (Neovim is not supported).
 - No external commands or dependencies.
 
 ## Installation

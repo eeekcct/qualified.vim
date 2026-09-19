@@ -13,7 +13,7 @@ CONTENTS                                                *qualified*
 ==============================================================================
 1. Requirements                                         *qualified-requirements*
 
-Vim 9.0 or later with +vim9script. Neovim is not supported.
+Vim 9.1.0219 or later with +vim9script. Neovim is not supported.
 No external commands or dependencies are required.
 
 ==============================================================================

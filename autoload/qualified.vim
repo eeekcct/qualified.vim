@@ -1,7 +1,10 @@
 vim9script
 
-# Named modes keep Vim 9.0 compatibility; native enums require Vim 9.1.0219.
-export const Mode = {Visual: 0, Operator: 1, Select: 2}
+export enum Mode
+  Visual,
+  Operator,
+  Select
+endenum
 
 def FindName(): list<number>
   var line_text = getline(".")
@@ -21,7 +24,7 @@ def FindName(): list<number>
   return [match[1] + 1, match[2]]
 enddef
 
-export def Select(mode: number = Mode.Select): string
+export def Select(mode: Mode = Mode.Select): string
   var columns = FindName()
 
   # The operator mapping needs keys to execute after expression evaluation.
